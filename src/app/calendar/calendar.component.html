@@ -1,0 +1,20 @@
+<div class="calendar" *ngIf="_apiService.dataPickerIsShow">
+  <mat-form-field>
+    <input matInput [matDatepicker]="picker" placeholder="Choose a date" name="time" [(ngModel)]="dateFrom">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <div class="button-wrapper">
+    <i (click)="saveChange()" class="material-icons">
+      save_alt
+    </i>
+    <i (click)="colseDatePicker()" class="material-icons">
+      close
+    </i>
+  </div>
+  <mat-form-field>
+    <input matInput [matDatepicker]="picker2" placeholder="Choose a date" name="time2" [(ngModel)]="dateTo">
+    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+    <mat-datepicker #picker2></mat-datepicker>
+  </mat-form-field>
+</div>

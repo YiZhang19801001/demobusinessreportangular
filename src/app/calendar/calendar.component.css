@@ -1,0 +1,23 @@
+.calendar {
+  width: calc(100% - 20px);
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 10px 10px 0px 10px;
+  background-color: #ffc700;
+  z-index: 100;
+}
+
+.mat-form-field {
+  width: 35%;
+}
+.mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+.button-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

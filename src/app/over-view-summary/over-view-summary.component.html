@@ -1,0 +1,68 @@
+<div class="summary-container">
+  <p class="summary-title">Overall Summary</p>
+  <ul>
+    <li>
+      <span>#No. dockets:</span> <span>{{ summary_value.number_Docket }}</span>
+    </li>
+    <li>
+      <span>total amount:</span> <span>{{ summary_value.total_Amount }}</span>
+    </li>
+    <li>
+      <span>total discount:</span>
+      <span>{{ summary_value.total_Discount }}</span>
+    </li>
+    <li>
+      <span>total refunded:</span>
+      <span>{{ summary_value.refund_Amount }}</span>
+    </li>
+    <li>
+      <span>#No. refunded items:</span>
+      <span>{{ summary_value.refund_Number_Of_Item }}</span>
+    </li>
+  </ul>
+</div>
+
+<div (click)="navToCate()" class="chart-wrapper-cate">
+  go sales by category
+  <!-- <canvas id="chart_category">{{ chart_category }}</canvas> -->
+</div>
+
+<div (click)="navToItem()" class="chart-wrapper-item">
+  go sales by item
+  <!-- <canvas id="chart_item">{{ chart_item }}</canvas> -->
+</div>
+
+<div (click)="navTounpaidorder()" class="chart-wrapper-unpaid">
+  <canvas id="chart_unpaid">{{ chart_unpaid }}</canvas>
+</div>
+<div (click)="navToVoidLog()" class="void-log-container">
+  <p class="void-log-title">void log</p>
+  <table class="void-log-table">
+    <thead>
+      <tr>
+        <th>staff name</th>
+        <th>item name</th>
+        <th>quantity</th>
+      </tr>
+      <tr *ngFor="let item of voidlogs">
+        <td>{{ item.staff_name }}</td>
+        <td>{{ item.item_name }}</td>
+        <td>{{ item.quantity }}</td>
+      </tr>
+    </thead>
+  </table>
+</div>
+<!--
+  <div class="chart-wrapper-voidLog">
+    <canvas id="chart_voidLog">{{ chart_voidLog }}</canvas>
+  </div>
+-->
+<div (click)="navToDay()" class="chart-wrapper-day">
+  go sales by day
+  <!-- <canvas id="chart_day">{{ chart_day }}</canvas> -->
+</div>
+<!--
+  <div class="chart-wrapper-hour">
+    <canvas id="chart_hour">{{ chart_hour }}</canvas>
+  </div>
+-->

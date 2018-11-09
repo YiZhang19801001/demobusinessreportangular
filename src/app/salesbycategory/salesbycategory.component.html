@@ -1,0 +1,15 @@
+<div class="chart-wrapper-cate">
+  <canvas id="chart_category">{{ chart_category }}</canvas>
+</div>
+
+<table matSort (matSortChange)="sortData($event)">
+  <tr>
+    <th mat-sort-header="category_name">Category Name</th>
+    <th mat-sort-header="total_amount">Total Amount</th>
+  </tr>
+
+  <tr *ngFor="let cate of sortedCategories">
+    <td>{{cate.category_name}}</td>
+    <td class="td-total-amount">{{cate.total_amount}}</td>
+  </tr>
+</table>

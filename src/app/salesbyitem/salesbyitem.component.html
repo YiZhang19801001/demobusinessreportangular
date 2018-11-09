@@ -1,0 +1,17 @@
+<div class="chart-wrapper-item">
+  <canvas id="chart_item">{{ chart_item }}</canvas>
+</div>
+
+<table matSort (matSortChange)="sortData($event)">
+  <tr>
+    <th mat-sort-header="itemName">item Name</th>
+    <th mat-sort-header="quantity">quantity</th>
+    <th mat-sort-header="total_amount">total amount</th>
+  </tr>
+
+  <tr *ngFor="let item of sortedlist">
+    <td>{{item.itemName}}</td>
+    <td>{{item.quantity}}</td>
+    <td>{{item.total_amount}}</td>
+  </tr>
+</table>
