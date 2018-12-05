@@ -21,7 +21,10 @@ export class VoidLogComponent implements OnInit, OnDestroy {
   chart_item: any;
   list: ApiValue[] = new Array<ApiValue>();
   sortedlist: ApiValue[];
+
+  mode = true;
   navigationSubscription;
+  apiValueSubscription;
   constructor(private _router: Router, private _apiService: ValueService) {}
 
   sortData(sort: Sort) {
@@ -55,10 +58,17 @@ export class VoidLogComponent implements OnInit, OnDestroy {
   }
 
   initilize() {
-    this._apiService.getVoidLog().subscribe(res => {
+    this._apiService.showLoadingCover = true;
+    this.apiValueSubscription = this._apiService.getVoidLog().subscribe(res => {
       if (res instanceof Array) {
         this.list = res;
         this.sortedlist = this.list.slice();
+
+        if (res.length === 0) {
+          this.mode = false;
+          this._apiService.showLoadingCover = false;
+          return;
+        }
         res.forEach(function(ele, i) {
           ele.color = 'hsl(' + (i / res.length) * 360 + ', 50%, 50%)';
         });
@@ -66,9 +76,7 @@ export class VoidLogComponent implements OnInit, OnDestroy {
         const item_name = res.map(data => data.item_name);
         const quantity = res.map(data => data.quantity);
         const colors = res.map(data => data.color);
-        const canvas = <HTMLCanvasElement>(
-          document.getElementById('chart_item')
-        );
+        const canvas = <HTMLCanvasElement>document.getElementById('chart_item');
         const ctx = canvas.getContext('2d');
 
         this.chart = new Chart(ctx, {
@@ -104,6 +112,7 @@ export class VoidLogComponent implements OnInit, OnDestroy {
           }
         });
       }
+      this._apiService.showLoadingCover = false;
     });
   }
   ngOnDestroy() {
@@ -112,6 +121,9 @@ export class VoidLogComponent implements OnInit, OnDestroy {
     // method on every navigationEnd event.
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
+    }
+    if (this.apiValueSubscription) {
+      this.apiValueSubscription.unsubscribe();
     }
   }
 }

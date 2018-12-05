@@ -31,6 +31,10 @@ import { VoidLogComponent } from './void-log/void-log.component';
 import { UnpaidOrderComponent } from './unpaid-order/unpaid-order.component';
 import { OverViewSummaryComponent } from './over-view-summary/over-view-summary.component';
 import { CalendarComponent } from './calendar/calendar.component';
+import { HeadComponent } from './head/head.component';
+import { LoadingCoverComponent } from './loading-cover/loading-cover.component';
+import { LogoutModalComponent } from './logout-modal/logout-modal.component';
+import { TimeLabelComponent } from './time-label/time-label.component';
 
 // Configs
 export function getAuthServiceConfigs() {
@@ -63,7 +67,11 @@ export function getAuthServiceConfigs() {
     VoidLogComponent,
     UnpaidOrderComponent,
     OverViewSummaryComponent,
-    CalendarComponent
+    CalendarComponent,
+    HeadComponent,
+    LoadingCoverComponent,
+    LogoutModalComponent,
+    TimeLabelComponent
   ],
   imports: [
     BrowserModule,

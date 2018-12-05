@@ -1,0 +1,15 @@
+<mat-toolbar>
+  <i (click)="back()" class="material-icons"> arrow_back_ios </i>
+  <mat-form-field *ngIf="_apiService.shop_id">
+    <mat-select [value]="_apiService.method">
+      <mat-option
+        *ngFor="let method of methods"
+        [value]="method"
+        (click)="onChangeOption(method)"
+        >{{ method }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <i (click)="showDatePicker()" class="material-icons"> date_range </i>
+  <i class="material-icons" (click)="showLogout()"> highlight_off </i>
+</mat-toolbar>

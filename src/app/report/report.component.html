@@ -1,19 +1,4 @@
-<mat-toolbar>
-  <i (click)="back()" class="material-icons">
-    arrow_back_ios
-  </i>
-  <mat-form-field>
-    <mat-select>
-      <mat-option *ngFor="let method of methods" [value]="method" (click)="onChangeOption(method)">
-        <span>{{method}}</span>
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <i (click)="showDatePicker()" class="material-icons">
-    date_range
-  </i>
-</mat-toolbar>
-
+<app-head></app-head>
 <app-calendar></app-calendar>
 
 <router-outlet></router-outlet>

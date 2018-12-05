@@ -1,0 +1,23 @@
+.time-label-item {
+  width: 90%;
+  margin: 5px auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.item-title {
+  font-weight: 500;
+  width: 34%;
+  display: flex;
+  justify-content: space-between;
+  text-transform: uppercase;
+}
+.time-item {
+  display: flex;
+  justify-content: space-between;
+  width: 25%;
+}
+.time-item-time {
+  font-size: 10px;
+  line-height: 18px;
+}

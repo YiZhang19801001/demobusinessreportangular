@@ -1,0 +1,35 @@
+.Logout_background {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #b4b4b4b5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000000;
+}
+
+mat-card {
+  width: 80%;
+  height: 100px;
+  margin: auto;
+  margin-top: 45%;
+}
+
+mat-card-title {
+  text-align: center;
+}
+mat-card-content {
+  display: flex;
+  justify-content: space-between;
+}
+.logout_button {
+  background-color: #f34242;
+  color: white;
+}
+.cancel_button {
+  background-color: #ffc700;
+  color: black;
+}

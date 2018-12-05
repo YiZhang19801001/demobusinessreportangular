@@ -1,7 +1,5 @@
-.calendar {
+.app_calendar {
   width: calc(100% - 20px);
-  display: flex;
-  justify-content: space-between;
   position: fixed;
   top: 0;
   left: 0;
@@ -9,9 +7,17 @@
   background-color: #ffc700;
   z-index: 100;
 }
+.calendar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title {
+  color: #585858;
+}
 
 .mat-form-field {
-  width: 35%;
+  width: 100%;
 }
 .mat-form-field-wrapper {
   padding-bottom: 0 !important;
@@ -19,5 +25,24 @@
 .button-wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+}
+
+.date_picker_wraper {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+}
+.pre-datepicker_group {
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+.pre-datepicker_button {
+  text-transform: uppercase;
+  flex: 1;
+  margin: 1px;
+  padding: 4px 8px;
 }

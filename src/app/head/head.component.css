@@ -1,0 +1,39 @@
+.button-container {
+  display: flex;
+  overflow: scroll;
+  height: 44px;
+  padding-top: 4px;
+  box-shadow: inset -2px 0px 3px #8f8f8f;
+}
+
+button.mat-raised-button {
+  height: 36px;
+  margin: 2px 20px;
+  text-align: center;
+  text-transform: uppercase;
+  min-width: auto;
+}
+
+mat-toolbar.mat-toolbar {
+  background-color: #ffc700;
+  display: flex;
+  justify-content: space-between;
+}
+.active-button {
+  background-color: black;
+  color: white;
+}
+
+img {
+  width: 50px;
+  height: 50px;
+}
+
+span {
+  font-size: 14px;
+}
+mat-select {
+  font-size: 16px;
+  font-weight: 600;
+  padding-left: 10px;
+}

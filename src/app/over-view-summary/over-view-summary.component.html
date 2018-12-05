@@ -1,68 +1,222 @@
-<div class="summary-container">
-  <p class="summary-title">Overall Summary</p>
-  <ul>
-    <li>
-      <span>#No. dockets:</span> <span>{{ summary_value.number_Docket }}</span>
-    </li>
-    <li>
-      <span>total amount:</span> <span>{{ summary_value.total_Amount }}</span>
-    </li>
-    <li>
-      <span>total discount:</span>
-      <span>{{ summary_value.total_Discount }}</span>
-    </li>
-    <li>
-      <span>total refunded:</span>
-      <span>{{ summary_value.refund_Amount }}</span>
-    </li>
-    <li>
-      <span>#No. refunded items:</span>
-      <span>{{ summary_value.refund_Number_Of_Item }}</span>
-    </li>
-  </ul>
-</div>
+<app-time-label></app-time-label>
+<mat-card *ngFor="let item of summary_value.summary_Items" class="text_card">
+  <mat-card-subtitle>{{ item.name }}</mat-card-subtitle>
+  <mat-card-title>
+    <h3>
+      <span *ngIf="isMoney(item.name)">$</span
+      >{{ item.value < 0 ? item.value * -1 : item.value }}
+    </h3>
+  </mat-card-title>
+  <mat-card-content
+    ><span>{{
+      item.compare_Value < 0 ? item.compare_Value * -1 : item.compare_Value
+    }}</span>
+    <span
+      [ngClass]="
+        compareHelper(item.name, item.value, item.compare_Value).class_name
+      "
+    >
+      <i
+        class="material-icons"
+        *ngIf="
+          compareHelper(item.name, item.value, item.compare_Value).status ===
+          'increase'
+        "
+        >arrow_drop_up</i
+      >
+      <i
+        class="material-icons"
+        *ngIf="
+          compareHelper(item.name, item.value, item.compare_Value).status ===
+          'equal'
+        "
+      >
+        remove
+      </i>
+      <i
+        class="material-icons"
+        *ngIf="
+          compareHelper(item.name, item.value, item.compare_Value).status ===
+          'decrease'
+        "
+        >arrow_drop_down</i
+      >
 
-<div (click)="navToCate()" class="chart-wrapper-cate">
-  go sales by category
-  <!-- <canvas id="chart_category">{{ chart_category }}</canvas> -->
-</div>
+      <span>{{
+        compareHelper(item.name, item.value, item.compare_Value).value
+      }}</span>
+    </span>
+  </mat-card-content>
+</mat-card>
 
-<div (click)="navToItem()" class="chart-wrapper-item">
-  go sales by item
-  <!-- <canvas id="chart_item">{{ chart_item }}</canvas> -->
-</div>
-
-<div (click)="navTounpaidorder()" class="chart-wrapper-unpaid">
-  <canvas id="chart_unpaid">{{ chart_unpaid }}</canvas>
-</div>
-<div (click)="navToVoidLog()" class="void-log-container">
-  <p class="void-log-title">void log</p>
-  <table class="void-log-table">
-    <thead>
-      <tr>
-        <th>staff name</th>
-        <th>item name</th>
-        <th>quantity</th>
-      </tr>
-      <tr *ngFor="let item of voidlogs">
-        <td>{{ item.staff_name }}</td>
-        <td>{{ item.item_name }}</td>
-        <td>{{ item.quantity }}</td>
-      </tr>
-    </thead>
-  </table>
-</div>
-<!--
-  <div class="chart-wrapper-voidLog">
-    <canvas id="chart_voidLog">{{ chart_voidLog }}</canvas>
-  </div>
--->
-<div (click)="navToDay()" class="chart-wrapper-day">
-  go sales by day
-  <!-- <canvas id="chart_day">{{ chart_day }}</canvas> -->
-</div>
-<!--
+<mat-card>
+  <mat-card-subtitle>{{ summary_value.hourly_Summary.name }}</mat-card-subtitle>
   <div class="chart-wrapper-hour">
     <canvas id="chart_hour">{{ chart_hour }}</canvas>
   </div>
+</mat-card>
+
+<mat-card>
+  <mat-card-subtitle>{{
+    summary_value.payment_Summary.name
+  }}</mat-card-subtitle>
+  <div class="chart-wrapper-hour">
+    <canvas id="chart_payment">{{ chart_payment }}</canvas>
+  </div>
+</mat-card>
+
+<mat-card>
+  <div class="container mt-2">
+    <table class="table table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Category</th>
+          <th>Qty</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of summary_value.custom_Data_Group.value">
+          <td>{{ item.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>${{ item.amount }}</td>
+        </tr>
+        <tr class="table-footer">
+          <th>Total:</th>
+          <th>{{ this.quantity_total }}</th>
+          <th>${{ this.amount_total }}</th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</mat-card>
+
+<!--
+  <mat-card>
+    <mat-card-subtitle>{{
+      summary_value.custom_Data_Group.name
+    }}</mat-card-subtitle>
+    <div class="chart-wrapper-hour">
+      <canvas id="chart_custom_data_group">{{ chart_custom_data_group }}</canvas>
+    </div>
+  </mat-card>
+-->
+<!--
+  <mat-card>
+    <mat-card-subtitle>Refunds</mat-card-subtitle>
+    <mat-card-title>
+      <h3>{{ summary_value.total_Refund }}</h3>
+    </mat-card-title>
+    <mat-card-subtitle>{{
+      summary_value.total_Refund_Compare
+    }}</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-subtitle>Discounts</mat-card-subtitle>
+    <mat-card-content>
+      <h3>{{ summary_value.total_Discount }}</h3>
+    </mat-card-content>
+    <mat-card-subtitle>{{
+      summary_value.total_Discount_Compare
+    }}</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-subtitle># of Transactions</mat-card-subtitle>
+    <mat-card-content>
+      <h3>{{ summary_value.number_Of_Transactions }}</h3>
+    </mat-card-content>
+    <mat-card-subtitle>{{
+      summary_value.number_Of_Transactions_Compare
+    }}</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-subtitle>Average Sale Value</mat-card-subtitle>
+    <mat-card-content>
+      <h3>{{ summary_value.avg_Sales_Value }}</h3>
+    </mat-card-content>
+    <mat-card-subtitle>{{
+      summary_value.avg_Sales_Value_Compare
+    }}</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>Average Items Per Sale</mat-card-title>
+    <mat-card-content>
+      <h3>{{ summary_value.avg_Item_Per_Sale }}</h3>
+    </mat-card-content>
+    <mat-card-subtitle>{{
+      summary_value.avg_Item_Per_Sale_Compare_Compare
+    }}</mat-card-subtitle>
+  </mat-card>
+-->
+
+<!-- old version -->
+
+<!--
+  <div class="summary-container">
+    <p class="summary-title">Overall Summary</p>
+    <ul>
+      <li>
+        <span>#No. dockets:</span> <span>{{ summary_value.number_Docket }}</span>
+      </li>
+      <li>
+        <span>total amount:</span> <span>{{ summary_value.total_Amount }}</span>
+      </li>
+      <li>
+        <span>total discount:</span>
+        <span>{{ summary_value.total_Discount }}</span>
+      </li>
+      <li>
+        <span>total refunded:</span>
+        <span>{{ summary_value.refund_Amount }}</span>
+      </li>
+      <li>
+        <span>#No. refunded items:</span>
+        <span>{{ summary_value.refund_Number_Of_Item }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <div (click)="navToCate()" class="chart-wrapper-cate">
+    go sales by category
+    <canvas id="chart_category">{{ chart_category }}</canvas>
+  </div>
+
+  <div (click)="navToItem()" class="chart-wrapper-item">
+    go sales by item
+    <canvas id="chart_item">{{ chart_item }}</canvas>
+  </div>
+
+  <div (click)="navTounpaidorder()" class="chart-wrapper-unpaid">
+    <canvas id="chart_unpaid">{{ chart_unpaid }}</canvas>
+  </div>
+  <div (click)="navToVoidLog()" class="void-log-container">
+    <p class="void-log-title">void log</p>
+    <table class="void-log-table">
+      <thead>
+        <tr>
+          <th>staff name</th>
+          <th>item name</th>
+          <th>quantity</th>
+        </tr>
+        <tr *ngFor="let item of voidlogs">
+          <td>{{ item.staff_name }}</td>
+          <td>{{ item.item_name }}</td>
+          <td>{{ item.quantity }}</td>
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+    <div class="chart-wrapper-voidLog">
+      <canvas id="chart_voidLog">{{ chart_voidLog }}</canvas>
+    </div>
+
+  <div (click)="navToDay()" class="chart-wrapper-day">
+    go sales by day
+   <canvas id="chart_day">{{ chart_day }}</canvas>
+  </div>
+
+    <div class="chart-wrapper-hour">
+      <canvas id="chart_hour">{{ chart_hour }}</canvas>
+    </div>
 -->

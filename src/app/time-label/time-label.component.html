@@ -1,0 +1,42 @@
+<div class="time-label">
+  <div class="time-label-item">
+    <span class="item-title"><span>select</span><span>period:</span></span>
+    <span class="time-item">
+      <span class="time-item-date">{{
+        _apiService.dateFrom | date: "MMM dd"
+      }}</span
+      ><span class="time-item-time">{{
+        _apiService.dateFrom | date: "hh:mm a"
+      }}</span>
+    </span>
+    <span>-</span>
+    <span class="time-item">
+      <span class="time-item-date">{{
+        _apiService.dateTo | date: "MMM dd"
+      }}</span>
+      <span class="time-item-time">{{
+        _apiService.dateTo | date: "hh:mm a"
+      }}</span>
+    </span>
+  </div>
+  <div class="time-label-item">
+    <span class="item-title"><span>compare</span><span>period:</span></span>
+    <span class="time-item">
+      <span class="time-item-date">{{
+        _apiService.compare_dateFrom | date: "MMM dd"
+      }}</span
+      ><span class="time-item-time">{{
+        _apiService.compare_dateFrom | date: "hh:mm a"
+      }}</span>
+    </span>
+    <span>-</span>
+    <span class="time-item">
+      <span class="time-item-date">{{
+        _apiService.compare_dateTo | date: "MMM dd"
+      }}</span>
+      <span class="time-item-time">{{
+        _apiService.compare_dateTo | date: "hh:mm a"
+      }}</span>
+    </span>
+  </div>
+</div>

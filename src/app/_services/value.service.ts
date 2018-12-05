@@ -1,22 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-
 export class SearchCondition {
   shopId: string;
   dateFrom: string;
   dateTo: string;
+  compare_dateFrom: string;
+  compare_dateTo: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValueService {
-  apiUrl = 'http://192.168.20.101:5000/value/';
+   apiUrl = 'http://101.187.98.39:5000/value/';
 
+  // apiUrl = 'http://192.168.1.88:5000/value/';
+
+  showLoadingCover = false;
+
+  showLogout = false;
   dataPickerIsShow = false;
   dateFrom: Date;
   dateTo: Date;
+
+  method: String = 'Dash Board';
+
+  compare_dateFrom: Date;
+  compare_dateTo: Date;
   arr_date: Date[];
   body: SearchCondition = new SearchCondition();
 
@@ -29,6 +39,7 @@ export class ValueService {
   }
 
   getSummary() {
+    this.getBody(1);
     return this._http.post(this.apiUrl + 'getsummary', this.body);
   }
 
@@ -60,42 +71,73 @@ export class ValueService {
   }
 
   getBody(flag: number) {
-    console.log(this.shop_id);
-    this.body.shopId = this.shop_id || '6';
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    this.body.shopId = this.shop_id;
     switch (flag) {
       case 1:
+        this.setDateByProps();
+        break;
       case 2:
-        if (this.dateFrom) {
-          this.body.dateFrom = this.dateFrom.toLocaleDateString(
-            'en-us',
-            options
-          );
+        if (this.dateTo.getDate() - this.dateFrom.getDate() > 1) {
+          this.setDateByProps();
         } else {
-          this.body.dateFrom = new Date().toLocaleDateString('en-us', options);
-        }
-
-        if (this.dateTo) {
-          this.body.dateTo = this.dateTo.toLocaleDateString('en-us', options);
-        } else {
-          this.body.dateTo = new Date().toLocaleDateString('en-us', options);
+          this.setBodyDateByLast7Days();
         }
         break;
-      case 3:
-        if (this.dateFrom) {
-          this.body.dateFrom = this.dateFrom.toLocaleTimeString();
-        } else {
-          this.body.dateFrom = '00:00:00';
-        }
 
-        if (this.dateTo) {
-          this.body.dateTo = this.dateTo.toLocaleTimeString();
-        } else {
-          this.body.dateTo = '12:00:00';
-        }
-        break;
       default:
         break;
     }
+  }
+
+  setDateByProps() {
+    if (this.dateFrom) {
+      this.body.dateFrom = this.dateFrom.toLocaleString('en-us');
+    } else {
+      this.body.dateFrom = new Date().toLocaleString('en-us');
+    }
+
+    if (this.dateTo) {
+      this.body.dateTo = this.dateTo.toLocaleString('en-us');
+    } else {
+      this.body.dateTo = new Date().toLocaleString('en-us');
+    }
+
+    if (this.compare_dateTo) {
+      this.body.compare_dateTo = this.compare_dateTo.toLocaleString('en-us');
+    } else {
+      this.body.compare_dateTo = new Date().toLocaleString('en-us');
+    }
+
+    if (this.compare_dateFrom) {
+      this.body.compare_dateFrom = this.compare_dateFrom.toLocaleString(
+        'en-us'
+      );
+    } else {
+      this.body.compare_dateFrom = new Date().toLocaleString('en-us');
+    }
+  }
+
+  setBodyDateByLast7Days() {
+    const dateFrom = new Date(
+      new Date(new Date().setDate(new Date().getDate() - 6)).toLocaleDateString(
+        'en-us'
+      ) + ',00:00:00'
+    );
+    const dateTo = new Date();
+    const compare_dateFrom = new Date(
+      new Date(
+        new Date().setDate(new Date().getDate() - 13)
+      ).toLocaleDateString('en-us') + ',00:00:00'
+    );
+    const compare_dateTo = new Date(
+      new Date(new Date().setDate(new Date().getDate() - 7)).toLocaleDateString(
+        'en-us'
+      ) + ',23:59:59'
+    );
+
+    this.body.dateFrom = dateFrom.toLocaleString('en-us');
+    this.body.dateTo = dateTo.toLocaleString('en-us');
+    this.body.compare_dateFrom = compare_dateFrom.toLocaleString('en-us');
+    this.body.compare_dateTo = compare_dateTo.toLocaleString('en-us');
   }
 }

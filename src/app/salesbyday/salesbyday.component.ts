@@ -3,9 +3,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Sort } from '@angular/material';
 import * as Chart from 'chart.js';
 import { NavigationEnd, Router } from '@angular/router';
-export class ApiValue {
+export class ApiValueArr {
+  data: ApiValue[] = new Array<ApiValue>();
+}
+export class ApiValueItem {
   single_date: string;
   sum_amount: number;
+}
+export class ApiValue {
+  id: number;
+  value: ApiValueItem = new ApiValueItem();
+  value_Compared: ApiValueItem = new ApiValueItem();
 }
 
 @Component({
@@ -19,7 +27,9 @@ export class SalesbydayComponent implements OnInit, OnDestroy {
   chart_item: any;
   list: ApiValue[] = new Array<ApiValue>();
   sortedlist: ApiValue[];
+  mode = true;
   navigationSubscription;
+  apiValueSubscription;
   constructor(private _apiService: ValueService, private _router: Router) {}
   ngOnDestroy() {
     // avoid memory leaks here by cleaning up after ourselves. If we
@@ -27,6 +37,9 @@ export class SalesbydayComponent implements OnInit, OnDestroy {
     // method on every navigationEnd event.
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
+    }
+    if (this.apiValueSubscription) {
+      this.apiValueSubscription.unsubscribe();
     }
   }
   sortData(sort: Sort) {
@@ -39,9 +52,21 @@ export class SalesbydayComponent implements OnInit, OnDestroy {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
         case 'single_date':
-          return compare(a.single_date, b.single_date, isAsc);
+          return compare(a.value.single_date, b.value.single_date, isAsc);
         case 'sum_amount':
-          return compare(a.sum_amount, b.sum_amount, isAsc);
+          return compare(a.value.sum_amount, b.value.sum_amount, isAsc);
+        case 'single_date_compared':
+          return compare(
+            a.value_Compared.single_date,
+            b.value_Compared.single_date,
+            isAsc
+          );
+        case 'sum_amount_compared':
+          return compare(
+            a.value_Compared.sum_amount,
+            b.value_Compared.sum_amount,
+            isAsc
+          );
         default:
           return 0;
       }
@@ -57,20 +82,35 @@ export class SalesbydayComponent implements OnInit, OnDestroy {
     });
   }
   initilize() {
-    this.shop_id = localStorage.getItem('shop_id');
-    this._apiService.getByDay().subscribe(res => {
+    this._apiService.showLoadingCover = true;
+    this.apiValueSubscription = this._apiService.getByDay().subscribe(res => {
       if (res instanceof Array) {
         this.list = res;
         this.sortedlist = this.list.slice();
+        if (res.length === 0) {
+          this.mode = false;
+          this._apiService.showLoadingCover = false;
+          return;
+        }
         res.forEach(function(e, i) {
-          e.color = 'hsl(' + (i / res.length) * 360 + ', 50%, 50%)';
-          const n = e['single_date'].lastIndexOf('T');
-          const date = e['single_date'].substring(5, n);
-          e.label = date;
+          // e.color = 'hsl(' + (i / res.length) * 360 + ', 50%, 50%)';
+          // const n = e['value']['single_date'].lastIndexOf('T');
+          // const date = e['value']['single_date'].substring(5, n);
+          // e.label = date;
+          // const n_compared = e['value_Compare']['single_date'].lastIndexOf('T');
+          // const date_compared = e['value_Compared']['single_date'].substring(
+          //   5,
+          //   n_compared
+          // );
+          // e.label_compared = date_compared;
         });
-        const single_date = res.map(data => data.label);
-        const sum_amount = res.map(data => data.sum_amount);
-        const colors = res.map(data => data.color);
+        const single_date = res.map(data => data.value.single_date);
+        const sum_amount = res.map(data => data.value.sum_amount);
+        const sum_amount_compared = res.map(
+          data => data.value_Compared.sum_amount
+        );
+
+        // const colors = res.map(data => data.color);
         const canvas = <HTMLCanvasElement>document.getElementById('chart_item');
         const ctx = canvas.getContext('2d');
 
@@ -80,9 +120,15 @@ export class SalesbydayComponent implements OnInit, OnDestroy {
             labels: single_date,
             datasets: [
               {
-                label: 'amount',
+                label: 'selected',
                 data: sum_amount,
-                backgroundColor: colors,
+                backgroundColor: '#ffc700',
+                borderWidth: 1
+              },
+              {
+                label: 'compared',
+                data: sum_amount_compared,
+                backgroundColor: '#1e1e1e',
                 borderWidth: 1
               }
             ]
@@ -106,6 +152,7 @@ export class SalesbydayComponent implements OnInit, OnDestroy {
           }
         });
       }
+      this._apiService.showLoadingCover = false;
     });
   }
 }

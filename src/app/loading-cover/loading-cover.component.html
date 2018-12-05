@@ -1,0 +1,6 @@
+<div *ngIf="_apiService.showLoadingCover" class="spinner-container">
+  <mat-spinner></mat-spinner>
+  <button mat-raised-button (click)="cancelRequest()" class="cancel-button">
+    Cancel Request
+  </button>
+</div>

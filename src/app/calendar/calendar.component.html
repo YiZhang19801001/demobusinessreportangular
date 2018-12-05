@@ -1,20 +1,129 @@
-<div class="calendar" *ngIf="_apiService.dataPickerIsShow">
-  <mat-form-field>
-    <input matInput [matDatepicker]="picker" placeholder="Choose a date" name="time" [(ngModel)]="dateFrom">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-  <div class="button-wrapper">
-    <i (click)="saveChange()" class="material-icons">
-      save_alt
-    </i>
-    <i (click)="colseDatePicker()" class="material-icons">
-      close
-    </i>
+<div class="app_calendar" *ngIf="_apiService.dataPickerIsShow">
+  <div class="calendar">
+    <div class="date_picker_wraper">
+      <span class="title">PERIOD TO SHOW</span>
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          placeholder="Choose start date"
+          name="time"
+          [(ngModel)]="dateFrom"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="picker2"
+          placeholder="Choose end date"
+          name="time2"
+          [(ngModel)]="dateTo"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="date_picker_wraper">
+      <span class="title">PERIOD TO COMPARE</span>
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="picker3"
+          placeholder="Choose start date"
+          name="time3"
+          [(ngModel)]="compare_dateFrom"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker3"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker3></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="picker4"
+          placeholder="Choose end date"
+          name="time4"
+          [(ngModel)]="compare_dateTo"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker4"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker4></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="button-wrapper">
+      <i (click)="colseDatePicker()" class="material-icons"> close </i>
+      <i (click)="saveChange()" class="material-icons"> done </i>
+    </div>
   </div>
-  <mat-form-field>
-    <input matInput [matDatepicker]="picker2" placeholder="Choose a date" name="time2" [(ngModel)]="dateTo">
-    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-    <mat-datepicker #picker2></mat-datepicker>
-  </mat-form-field>
+
+  <div class="pre-datepicker_group">
+    <button
+      mat-raised-button
+      (click)="setDateToday()"
+      class="pre-datepicker_button"
+    >
+      Today
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateYesterday()"
+      class="pre-datepicker_button"
+    >
+      Yesterday
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateWeekToDate()"
+      class="pre-datepicker_button"
+    >
+      week to date
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateLastWeek()"
+      class="pre-datepicker_button"
+    >
+      last week
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateLast7Days()"
+      class="pre-datepicker_button"
+    >
+      last 7 days
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateMonthToDate()"
+      class="pre-datepicker_button"
+    >
+      month to date
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateLastMonth()"
+      class="pre-datepicker_button"
+    >
+      last month
+    </button>
+    <button
+      mat-raised-button
+      (click)="setDateLast30Days()"
+      class="pre-datepicker_button"
+    >
+      last 30 days
+    </button>
+  </div>
 </div>

@@ -1,0 +1,13 @@
+<div *ngIf="_apiService.showLogout" class="Logout_background">
+  <mat-card>
+    <mat-card-title>Are you sure to logout?</mat-card-title>
+    <mat-card-content>
+      <button mat-button (click)="logout()" class="logout_button">
+        Logout
+      </button>
+      <button mat-button (click)="cancelLogout()" class="cancel_button">
+        Cancel
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -21,8 +21,8 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
     runGuardsAndResolvers: 'always',
     children: [
-      { path: '', redirectTo: 'summary/:id', pathMatch: 'full' },
-      { path: 'summary/:id', component: SummaryComponent },
+      { path: '', redirectTo: 'summary', pathMatch: 'full' },
+      { path: 'summary', component: SummaryComponent },
       { path: 'salesbycategory', component: SalesbycategoryComponent },
       { path: 'salesbyitem', component: SalesbyitemComponent },
       { path: 'salesbyhour', component: SalesbyhourComponent },
@@ -37,7 +37,7 @@ const appRoutes: Routes = [
     runGuardsAndResolvers: 'always',
     children: [
       {
-        path: 'summary/:id',
+        path: 'summary',
         component: OverViewSummaryComponent,
         canActivate: [AuthGuard]
       }

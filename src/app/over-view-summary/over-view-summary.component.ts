@@ -1,20 +1,63 @@
 import { ValueService } from './../_services/value.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { map } from 'rxjs/operators';
 import * as Chart from 'chart.js';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 export class SummaryValue {
-  number_Docket: number;
-  refund_Amount: number;
-  refund_Number_Of_Item: number;
   shopId: number;
-  total_Amount: number;
-  total_Discount: number;
+  summary_Items: SummaryItem[];
+  hourly_Summary: HourlySummary = new HourlySummary();
+
+  payment_Summary: PaymentSummary = new PaymentSummary();
+
+  custom_Data_Group: CustomDataGroup = new CustomDataGroup();
+}
+
+export class CustomDataGroup {
+  name: string;
+  value: CustomDataItem[];
+  compare_Value: CustomDataItem[];
+}
+
+export class CustomDataItem {
+  name: string;
+  quantity: number;
+
+  amount: number;
+  color: any;
+}
+
+export class PaymentSummary {
+  name: string;
+  value: PaymentValue[];
+  compare_Value: PaymentValue[];
+}
+
+export class PaymentValue {
+  amount: number;
+  paymenttype: string;
+  color: any;
+}
+
+export class HourlySummary {
+  name: string;
+  value: number[];
+  compare_Value: number[];
+}
+export class SummaryItem {
+  name: string;
+  value: number;
+  compare_Value: number;
 }
 export class VoidLog {
   staff_name: string;
   item_name: string;
   quantity: number;
+}
+
+export class CompareResult {
+  class_name: string;
+  status: string;
+  value: string;
 }
 @Component({
   selector: 'app-over-view-summary',
@@ -31,15 +74,21 @@ export class OverViewSummaryComponent implements OnInit, OnDestroy {
   chart_category: any;
   chart_item: any;
   chart_unpaid: any;
-
+  chart_hour: any;
+  chart_payment: any;
   chart_day: any;
+  chart_custom_data_group: any;
   voidlogs: VoidLog[] = new Array<VoidLog>();
 
   navigationSubscription;
+  getSummary;
+
+  quantity_total: number;
+  amount_total: number;
   constructor(
-    private route: ActivatedRoute,
+    // private route: ActivatedRoute,
     private router: Router,
-    private _apiService: ValueService
+    public _apiService: ValueService
   ) {}
 
   ngOnInit() {
@@ -71,14 +120,14 @@ export class OverViewSummaryComponent implements OnInit, OnDestroy {
   initialize() {
     // const id = +this.route.snapshot.paramMap.get('id');
     // this._apiService.shop_id = id + '';
-    this._apiService.getSummary().subscribe(res => {
+    this._apiService.showLoadingCover = true;
+    this.getSummary = this._apiService.getSummary().subscribe(res => {
       this.summary_value = res as SummaryValue;
+      this.renderChartHour();
+      this.renderPaymentChart();
+      this.renderCustomDataGroupTable();
+      this._apiService.showLoadingCover = false;
     });
-    // this.renderCategoryChart();
-    // this.renderItemChart();
-    // this.renderDayChart();
-    // this.renderUnpaidOrder();
-    // this.renderVoidLog();
   }
 
   ngOnDestroy() {
@@ -88,8 +137,201 @@ export class OverViewSummaryComponent implements OnInit, OnDestroy {
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
+
+    if (this.getSummary) {
+      this.getSummary.unsubscribe();
+    }
   }
 
+  compareHelper(name: string, value1: number, value2: number) {
+    const res = new CompareResult();
+    if (name === 'Total Discount' || name === 'Total Refund') {
+      if (value2 === 0) {
+        res.value = '0.00';
+      } else {
+        res.value =
+          Math.round(((value1 - value2) / value2) * -10000) / 100 + '%';
+      }
+      if (value1 < value2) {
+        res.class_name = 'compare_result_increase';
+        res.status = 'decrease';
+        return res;
+      } else if (value1 > value2) {
+        res.class_name = 'compare_result_decrease';
+        res.status = 'increase';
+        return res;
+      } else {
+        res.class_name = 'compare_result_equal';
+        res.status = 'equal';
+        return res;
+      }
+    } else {
+      if (value2 === 0) {
+        res.value = '0.00';
+      } else {
+        res.value =
+          Math.round(((value1 - value2) / value2) * 10000) / 100 + '%';
+      }
+      if (value1 > value2) {
+        res.class_name = 'compare_result_increase';
+        res.status = 'increase';
+        return res;
+      } else if (value1 < value2) {
+        res.class_name = 'compare_result_decrease';
+        res.status = 'decrease';
+        return res;
+      } else {
+        res.class_name = 'compare_result_equal';
+        res.status = 'equal';
+        return res;
+      }
+    }
+  }
+
+  renderCustomDataGroupTable() {
+    let sum = 0;
+    let total = 0;
+    this.summary_value.custom_Data_Group.value.forEach(item => {
+      sum = sum + item.quantity;
+      total = total + item.amount;
+    });
+    this.quantity_total = sum;
+    this.amount_total = Math.round(total * 100) / 100;
+  }
+  renderChartHour() {
+    const values = this.summary_value.hourly_Summary.value;
+    const compare_Values = this.summary_value.hourly_Summary.compare_Value;
+    const labels = new Array();
+
+    for (let index = 0; index < 24; index++) {
+      labels.push(index + '');
+    }
+    const canvas = <HTMLCanvasElement>document.getElementById('chart_hour');
+    const ctx = canvas.getContext('2d');
+
+    this.chart_hour = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'selected',
+            data: values,
+            backgroundColor: '#ffc700',
+            borderWidth: 1
+          },
+          {
+            label: 'compared',
+            data: compare_Values,
+            backgroundColor: '#1e1e1e',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
+
+  renderPaymentChart() {
+    const values = this.summary_value.payment_Summary.value;
+    const compare_values = this.summary_value.payment_Summary.compare_Value;
+
+    values.forEach(function(e, i) {
+      e.color = 'hsl(' + (i / values.length) * 360 + ', 50%, 50%)';
+    });
+
+    compare_values.forEach(function(e, i) {
+      e.color = 'hsl(' + (i / values.length) * 360 + ', 50%, 50%)';
+    });
+
+    const value_type = values.map(data => data.paymenttype);
+    const value_amount = values.map(data => data.amount);
+    const compare_value_type = compare_values.map(data => data.paymenttype);
+    const compare_value_amount = compare_values.map(data => data.amount);
+
+    const colors = values.map(data => data.color);
+
+    const canvas = <HTMLCanvasElement>document.getElementById('chart_payment');
+    const ctx = canvas.getContext('2d');
+
+    this.chart_payment = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        datasets: [
+          {
+            label: 'selected',
+            data: value_amount,
+            backgroundColor: colors,
+            borderWidth: 1
+          },
+          {
+            label: 'compared',
+            data: compare_value_amount,
+            backgroundColor: colors,
+            borderWidth: 1
+          }
+        ],
+        labels: value_type
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
+
+  renderCustomDataGroupChart() {
+    const values = this.summary_value.custom_Data_Group.value;
+    const compare_values = this.summary_value.custom_Data_Group.compare_Value;
+
+    values.forEach(function(e, i) {
+      e.color = 'hsl(' + (i / values.length) * 360 + ', 50%, 50%)';
+    });
+
+    compare_values.forEach(function(e, i) {
+      e.color = 'hsl(' + (i / values.length) * 360 + ', 50%, 50%)';
+    });
+
+    const value_type = values.map(data => data.name);
+    const value_amount = values.map(data => data.quantity);
+    const compare_value_type = compare_values.map(data => data.name);
+    const compare_value_amount = compare_values.map(data => data.quantity);
+
+    const colors = values.map(data => data.color);
+
+    const canvas = <HTMLCanvasElement>(
+      document.getElementById('chart_custom_data_group')
+    );
+    const ctx = canvas.getContext('2d');
+
+    this.chart_custom_data_group = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        datasets: [
+          {
+            label: 'selected',
+            data: value_amount,
+            backgroundColor: colors,
+            borderWidth: 1
+          },
+          {
+            label: 'compared',
+            data: compare_value_amount,
+            backgroundColor: colors,
+            borderWidth: 1
+          }
+        ],
+        labels: value_type
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
   renderCategoryChart() {
     this._apiService.getByCategory().subscribe(res => {
       if (res instanceof Array) {
@@ -276,5 +518,12 @@ export class OverViewSummaryComponent implements OnInit, OnDestroy {
   }
   navTounpaidorder() {
     this.router.navigateByUrl('/report/unpaidorder');
+  }
+  isMoney(name: string) {
+    if (name === 'Avg. Item Per Sale' || name === 'Number Of Transactions') {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

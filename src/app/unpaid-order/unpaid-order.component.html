@@ -1,15 +1,29 @@
-<div class="chart-wrapper-item">
-  <canvas id="chart_item">{{ chart_item }}</canvas>
-</div>
+<!--
+  <div class="chart-wrapper-item">
+    <canvas id="chart_item">{{ chart_item }}</canvas>
+  </div>
+-->
+<mat-tab-group>
+  <mat-tab label="Total View">
+    <app-time-label></app-time-label>
+    <mat-card>
+      <mat-card-content>Total Unpaid Amount: </mat-card-content>
+      <mat-card-title>$ {{ total_unpaid }}</mat-card-title>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Detail View">
+    <app-time-label></app-time-label>
+    <table *ngIf="mode" matSort (matSortChange)="sortData($event)">
+      <tr>
+        <th mat-sort-header="customer">customer Name</th>
+        <th mat-sort-header="total_amount">total amount</th>
+      </tr>
+      <tr *ngFor="let item of sortedlist">
+        <td>{{ item.customer }}</td>
+        <td>{{ item.total_amount }}</td>
+      </tr>
+    </table>
+  </mat-tab>
+</mat-tab-group>
 
-<table matSort (matSortChange)="sortData($event)">
-  <tr>
-    <th mat-sort-header="customer">customer Name</th>
-    <th mat-sort-header="total_amount">total amount</th>
-  </tr>
-
-  <tr *ngFor="let item of sortedlist">
-    <td>{{item.customer}}</td>
-    <td>{{item.total_amount}}</td>
-  </tr>
-</table>
+<h6 *ngIf="!mode">no data found!</h6>

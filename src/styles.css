@@ -2,12 +2,16 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700");
-
+* {
+  font-family: "Roboto Condensed", sans-serif;
+}
 html,
 body {
   height: 100%;
 }
 body {
   margin: 0;
-  font-family: "Roboto Condensed", sans-serif !important;
+}
+.mat-tab-label {
+  flex: 1;
 }

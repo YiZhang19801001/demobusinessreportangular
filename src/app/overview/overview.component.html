@@ -1,9 +1,6 @@
-<mat-toolbar>
-  <span>Please Select Your Shop</span>
-  <i (click)="showDatePicker()" class="material-icons"> date_range </i>
-  <i class="material-icons" (click)="logout()"> highlight_off </i>
-</mat-toolbar>
+<app-head></app-head>
 <app-calendar></app-calendar>
+
 <div class="button-container" *ngIf="show">
   <button
     [ngClass]="{ 'active-button': shop.shop_id == select_shop_id }"

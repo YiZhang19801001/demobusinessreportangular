@@ -3,10 +3,12 @@ import { ValueService } from '../_services/value.service';
 import * as Chart from 'chart.js';
 import { Sort } from '@angular/material';
 import { NavigationEnd, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 export class Category {
   category_name: string;
   total_amount: number;
+  total_amount_compare: number;
 }
 
 @Component({
@@ -20,7 +22,9 @@ export class SalesbycategoryComponent implements OnInit, OnDestroy {
   chart_category: any;
   categories: Category[] = new Array<Category>();
   sortedCategories: Category[];
+  mode = true;
   navigationSubscription;
+  apiValueSubscription;
   constructor(private _apiService: ValueService, private _router: Router) {}
 
   sortData(sort: Sort) {
@@ -36,6 +40,8 @@ export class SalesbycategoryComponent implements OnInit, OnDestroy {
           return compare(a.category_name, b.category_name, isAsc);
         case 'total_amount':
           return compare(a.total_amount, b.total_amount, isAsc);
+        case 'total_amount_compare':
+          return compare(a.total_amount_compare, b.total_amount_compare, isAsc);
         default:
           return 0;
       }
@@ -46,6 +52,10 @@ export class SalesbycategoryComponent implements OnInit, OnDestroy {
     // don't then we will continue to run our initialiseInvites()
     // method on every navigationEnd event.
     if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+
+    if (this.apiValueSubscription) {
       this.navigationSubscription.unsubscribe();
     }
   }
@@ -60,56 +70,71 @@ export class SalesbycategoryComponent implements OnInit, OnDestroy {
   }
 
   initilized() {
-    this.shop_id = localStorage.getItem('shop_id');
-    this._apiService.getByCategory().subscribe(res => {
-      if (res instanceof Array) {
-        this.categories = res;
-        this.sortedCategories = this.categories.slice();
-        res.forEach(function(e, i) {
-          e.color = 'hsl(' + (i / res.length) * 360 + ', 50%, 50%)';
-        });
-        const cate_name = res.map(data => data.category_name);
-        const total_amount = res.map(data => data.total_amount);
-        const colors = res.map(data => data.color);
-        const canvas = <HTMLCanvasElement>(
-          document.getElementById('chart_category')
-        );
-        const ctx = canvas.getContext('2d');
+    this._apiService.showLoadingCover = true;
+    this.apiValueSubscription = this._apiService
+      .getByCategory()
+      .subscribe(res => {
+        if (res instanceof Array) {
+          this.categories = res;
+          this.sortedCategories = this.categories.slice();
 
-        this.chart = new Chart(ctx, {
-          type: 'horizontalBar',
-          data: {
-            labels: cate_name,
-            datasets: [
-              {
-                label: 'amount',
-                data: total_amount,
-                backgroundColor: colors,
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-              display: true,
-              text: 'sales by category'
-            },
-            scales: {
-              yAxes: [
+          if (res.length === 0) {
+            this.mode = false;
+            this._apiService.showLoadingCover = false;
+            return;
+          }
+          const cate_name = res.map(data => data.category_name);
+          const total_amount = res.map(data => data.total_amount);
+          const total_amount_compare = res.map(
+            data => data.total_amount_compare
+          );
+
+          const canvas = <HTMLCanvasElement>(
+            document.getElementById('chart_category')
+          );
+          const ctx = canvas.getContext('2d');
+
+          this.chart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+              labels: cate_name,
+              datasets: [
                 {
-                  barThickness: 16,
-                  ticks: {
-                    beginAtZero: true
-                  }
+                  label: 'selected',
+                  data: total_amount,
+                  backgroundColor: '#ffc700',
+                  borderWidth: 1
+                },
+                {
+                  label: 'compared',
+                  data: total_amount_compare,
+                  backgroundColor: '#1e1e1e',
+                  borderWidth: 1
                 }
               ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              title: {
+                display: true,
+                text: 'sales by category'
+              },
+              scales: {
+                yAxes: [
+                  {
+                    barThickness: 16,
+                    ticks: {
+                      beginAtZero: true
+                    }
+                  }
+                ]
+              }
             }
-          }
-        });
-      }
-    });
+          });
+        }
+        this._apiService.showLoadingCover = false;
+      });
   }
 }
 

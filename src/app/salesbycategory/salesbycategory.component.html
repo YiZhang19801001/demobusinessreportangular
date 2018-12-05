@@ -1,15 +1,27 @@
-<div class="chart-wrapper-cate">
-  <canvas id="chart_category">{{ chart_category }}</canvas>
+<div *ngIf="mode">
+  <mat-tab-group>
+    <mat-tab class="mat-tab-custom" label="Chart View">
+      <app-time-label></app-time-label>
+      <div class="chart-wrapper-cate">
+        <canvas id="chart_category">{{ chart_category }}</canvas>
+      </div>
+    </mat-tab>
+    <mat-tab class="mat-tab-custom" label="Table View">
+      <app-time-label></app-time-label>
+      <table matSort (matSortChange)="sortData($event)">
+        <tr>
+          <th mat-sort-header="category_name">Category Name</th>
+          <th mat-sort-header="total_amount">Total Amount</th>
+          <th mat-sort-header="total_amount_compare">Total Amount (compare)</th>
+        </tr>
+
+        <tr *ngFor="let cate of sortedCategories">
+          <td>{{ cate.category_name }}</td>
+          <td class="td-total-amount">{{ cate.total_amount }}</td>
+          <td class="td-total-amount">{{ cate.total_amount_compare }}</td>
+        </tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
 </div>
-
-<table matSort (matSortChange)="sortData($event)">
-  <tr>
-    <th mat-sort-header="category_name">Category Name</th>
-    <th mat-sort-header="total_amount">Total Amount</th>
-  </tr>
-
-  <tr *ngFor="let cate of sortedCategories">
-    <td>{{cate.category_name}}</td>
-    <td class="td-total-amount">{{cate.total_amount}}</td>
-  </tr>
-</table>
+<h6 *ngIf="!mode">no data found</h6>
