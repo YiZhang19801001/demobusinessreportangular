@@ -12,7 +12,7 @@ export class SearchCondition {
   providedIn: 'root'
 })
 export class ValueService {
-   apiUrl = 'http://101.187.98.39:5000/value/';
+  apiUrl = 'http://121.211.190.104:5000/value/';
 
   // apiUrl = 'http://192.168.1.88:5000/value/';
 
@@ -32,7 +32,7 @@ export class ValueService {
 
   shop_id: string;
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient) { }
 
   getShops() {
     return this._http.get(this.apiUrl + 'getshops');
